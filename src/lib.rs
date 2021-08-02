@@ -1,25 +1,19 @@
-// use std::env;
-// pub struct Config {
-//     pub file_extension: String,
-//     pub filename: String,
-// }
-// impl Config {
-//     pub fn new(mut args: env::Args) -> Result<Config, &'static str> {
-//         args.next();
+extern crate image;
+use image::{GenericImageView};
 
-//         let file_extension = match args.next() {
-//             Some(arg) => arg,
-//             None => return Err("Didn't get a file extension string"),
-//         };
+pub fn handle_args(input: &str, output: &str){
+    println!("Reading file!");
+    println!("Input file: {}", input);
+    // Use the open function to load an image from a Path.
+    // `open` returns a `DynamicImage` on success.
+    let img = image::open(input).unwrap();
 
-//         let filename = match args.next() {
-//             Some(arg) => arg,
-//             None => return Err("Didn't get a file name"),
-//         };
+    // The dimensions method returns the images width and height.
+    println!("dimensions {:?}", img.dimensions());
 
-//         Ok(Config {
-//             file_extension,
-//             filename,
-//         })
-//     }
-// }
+    // The color method returns the image's `ColorType`.
+    println!("{:?}", img.color());
+
+    // Write the contents of this image to the Writer in PNG format.
+    img.save(output).unwrap();
+}

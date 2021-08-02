@@ -7,10 +7,10 @@
 // https://docs.rs/clap/2.33.3/clap/index.html
 extern crate clap;
 //extern crate image;
-use clap::{Arg, App, SubCommand};
+use clap::{Arg, App};
 //use image::{GenericImageView};
-use std::fs;
-use substring::Substring;
+
+use image_convert;
 
 fn main() {
     // // Use the open function to load an image from a Path.
@@ -29,27 +29,31 @@ fn main() {
                           .version("0.1.0")
                           .author("Jonathan Yee <jonathan.yee16@gmail.com>")
                           .about("Does awesome things")
-                          .arg(Arg::with_name("config")
-                               .short("c")
-                               .long("config")
-                               .value_name("FILE")
-                               .help("Sets a custom config file")
-                               .takes_value(true))
+                        //   .arg(Arg::with_name("config")
+                        //        .short("c")
+                        //        .long("config")
+                        //        .value_name("FILE")
+                        //        .help("Sets a custom config file")
+                        //        .takes_value(true))
                           .arg(Arg::with_name("INPUT")
                                .help("Sets the input file to use")
                                .required(true)
                                .index(1))
-                          .arg(Arg::with_name("v")
-                               .short("v")
-                               .multiple(true)
-                               .help("Sets the level of verbosity"))
-                          .subcommand(SubCommand::with_name("test")
-                                      .about("controls testing features")
-                                      .version("1.3")
-                                      .author("Someone E. <someone_else@other.com>")
-                                      .arg(Arg::with_name("debug")
-                                          .short("d")
-                                          .help("print debug information verbosely")))
+                          .arg(Arg::with_name("OUTPUT")
+                               .help("Sets the output file")
+                               .required(true)
+                               .index(2))
+                        //   .arg(Arg::with_name("v")
+                        //        .short("v")
+                        //        .multiple(true)
+                        //        .help("Sets the level of verbosity"))
+                        //   .subcommand(SubCommand::with_name("test")
+                        //               .about("controls testing features")
+                        //               .version("1.3")
+                        //               .author("Someone E. <someone_else@other.com>")
+                        //               .arg(Arg::with_name("debug")
+                        //                   .short("d")
+                        //                   .help("print debug information verbosely")))
                           .get_matches();
 
     // Gets a value for config if supplied by user, or defaults to "default.conf"
@@ -60,6 +64,9 @@ fn main() {
     // required we could have used an 'if let' to conditionally get the value)
     let input = matches.value_of("INPUT").unwrap();
     println!("Using input file: {}", input);
+
+    let output = matches.value_of("OUTPUT").unwrap();
+    println!("Using output file: {}", output);
 
     // Vary the output based on how many times the user used the "verbose" flag
     // (i.e. 'myprog -v -v -v' or 'myprog -vvv' vs 'myprog -v'
@@ -81,18 +88,5 @@ fn main() {
     }
 
     // more program logic goes here...
-    let path = input;//&input.replace("\\", "/");
-    println!("{}",path);
-    if std::path::Path::new(path).is_dir() {
-        println!("Reading dir!");
-        let paths = fs::read_dir(path.trim()).unwrap();
-        for path in paths {
-        println!("Name: {}", path.unwrap().path().display());
-        }
-
-    }
-    else{
-        println!("Reading file!");
-        println!("Input file: {}", path);
-    }
+    image_convert::handle_args(&input, &output);
 }
